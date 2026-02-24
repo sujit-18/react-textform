@@ -3,12 +3,13 @@ import React from "react";
 export default function Textform() {
 
   const [text, setText] = React.useState("");
+  const [copied, setCopied] = React.useState(false);
 
-  const handleuppercase = () => {
+  const handleUppercase = () => {
     setText(text.toUpperCase());
   };
 
-  const handlelowercase = () => {
+  const handleLowercase = () => {
     setText(text.toLowerCase());
   };
 
@@ -22,66 +23,117 @@ export default function Textform() {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
-    alert("Text Copied!");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  const handleRemoveSpaces = () => {
+    setText(text.trim().split(/\s+/).join(" "));
+  };
+
+  const handleReverse = () => {
+    setText(text.split("").reverse().join(""));
   };
 
   const wordCount =
     text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
 
+  const readingTime = (0.008 * wordCount).toFixed(2);
+
   return (
     <div className="container my-5">
 
-      <h2 className="text-center mb-4">Enter your text here</h2>
+      <div className="card shadow-lg p-4">
 
-      <div className="d-flex justify-content-center">
-        <div style={{ width: "70%" }}>
-          
-          <textarea
-            className="form-control"
-            value={text}
-            onChange={handleOnChange}
-            rows="8"
-            placeholder="Enter your text here..."
-          ></textarea>
+        <h2 className="text-center mb-4">Text Utility Tool</h2>
 
-          <div className="mt-3">
+        <textarea
+          className="form-control mb-3"
+          value={text}
+          onChange={handleOnChange}
+          rows="6"
+          placeholder="Enter your text here..."
+        ></textarea>
 
-            <button
-              className="btn btn-primary me-2"
-              onClick={handleuppercase}
-            >
-              Convert to Uppercase
-            </button>
+        <div className="mb-3 d-flex flex-wrap gap-2">
 
-            <button
-              className="btn btn-success me-2"
-              onClick={handlelowercase}
-            >
-              Convert to Lowercase
-            </button>
+          <button
+            className="btn btn-primary"
+            onClick={handleUppercase}
+            disabled={!text}
+          >
+            Uppercase
+          </button>
 
-            <button
-              className="btn btn-secondary me-2"
-              onClick={handleClear}
-            >
-              Clear Text
-            </button>
+          <button
+            className="btn btn-success"
+            onClick={handleLowercase}
+            disabled={!text}
+          >
+            Lowercase
+          </button>
 
-            <button
-              className="btn btn-info"
-              onClick={handleCopy}
-            >
-              Copy Text
-            </button>
+          <button
+            className="btn btn-warning"
+            onClick={handleRemoveSpaces}
+            disabled={!text}
+          >
+            Remove Extra Spaces
+          </button>
 
-          </div>
+          <button
+            className="btn btn-dark"
+            onClick={handleReverse}
+            disabled={!text}
+          >
+            Reverse Text
+          </button>
+
+          <button
+            className="btn btn-info"
+            onClick={handleCopy}
+            disabled={!text}
+          >
+            Copy
+          </button>
+
+          <button
+            className="btn btn-danger"
+            onClick={handleClear}
+            disabled={!text}
+          >
+            Clear
+          </button>
+
         </div>
+
+        {copied && (
+          <div className="alert alert-success py-2">
+            Text Copied Successfully!
+          </div>
+        )}
+
+        <hr />
+
+        {/* Summary Section */}
+        <h4>Text Summary</h4>
+        <p>
+          <strong>{wordCount}</strong> words and{" "}
+          <strong>{text.length}</strong> characters
+        </p>
+        <p>
+          Estimated Reading Time: <strong>{readingTime}</strong> minutes
+        </p>
+
+        <hr />
+
+        {/* Preview Section */}
+        <h4>Preview</h4>
+        <div className="p-3 border rounded bg-light">
+          {text.length > 0 ? text : "Nothing to preview..."}
+        </div>
+
       </div>
-
-      <h4 className="ms-4 mt-4">
-        Count Words And Characters: {wordCount} words and {text.length} characters
-      </h4>
-
     </div>
   );
 }
